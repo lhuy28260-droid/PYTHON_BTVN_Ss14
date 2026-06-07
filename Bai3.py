@@ -1,3 +1,4 @@
+
 students = [
     {
         "student_id": "RA001",
@@ -13,8 +14,13 @@ students = [
     }
 ]
 
+
+
 def validate_score(score_input):
-    """Kiểm tra điểm số đầu vào có phải là số từ 0 đến 10 hay không"""
+    """
+    [Helper] Kiểm tra dữ liệu điểm đầu vào.
+    Trả về True nếu là số hợp lệ từ 0 đến 10, ngược lại trả về False.
+    """
     try:
         score = float(score_input)
         if 0 <= score <= 10:
@@ -23,15 +29,22 @@ def validate_score(score_input):
     except ValueError:
         return False
 
+
 def find_student_by_id(student_list, student_id):
-    """Tìm kiếm học viên theo ID, trả về Dictionary nếu có, ngược lại trả về None"""
+    """
+    [Helper] Tìm kiếm học viên trong danh sách dựa trên ID.
+    Trả về chính Dictionary của học viên nếu thấy (Pointer), ngược lại trả về None.
+    """
     for student in student_list:
         if student["student_id"] == student_id:
             return student
     return None
 
+
 def get_rank(average_score):
-    """Trả về chuỗi xếp loại dựa trên điểm trung bình"""
+    """
+    [Helper] Nhận điểm trung bình và phân loại học lực chuẩn doanh nghiệp.
+    """
     if average_score >= 8.0:
         return "Giỏi"
     elif average_score >= 6.5:
@@ -42,37 +55,39 @@ def get_rank(average_score):
         return "Yếu"
 
 
+
 def display_students(student_list):
-    """Chức năng 1: Hiển thị danh sách học viên"""
     print("\n--- DANH SÁCH HỌC VIÊN ---")
+    
+    # Kiểm soát ranh giới bãi dữ liệu trống
     if len(student_list) == 0:
         print("Danh sách học viên hiện đang trống.")
         return
 
-    for i, student in enumerate(student_list):
-        print(f"{i+1}. Mã: {student['student_id']} | Tên: {student['name']} | Toán: {student['math_score']} | Anh: {student['english_score']}")
+    for index, student in enumerate(student_list):
+        print(f"{index + 1}. Mã: {student['student_id']} | Tên: {student['name']} | Toán: {student['math_score']} | Anh: {student['english_score']}")
+
 
 def add_student(student_list):
-    """Chức năng 2: Thêm học viên mới"""
-    print("\n--- THÊM HỌC VIÊN MỚI ---")
-    
-    # [Bẫy 1]: Kiểm tra trùng mã
     while True:
-        s_id = input("Mã Học Viên: ").strip().upper()
-        if find_student_by_id(student_list, s_id):
+        student_id = input("Nhập Mã Học Viên: ").strip().upper()
+        if not student_id:
+            print("Mã học viên không được để trống!")
+            continue
+            
+        # Gọi Helper kiểm tra trùng lặp
+        if find_student_by_id(student_list, student_id):
             print("Mã học viên đã tồn tại, vui lòng nhập mã khác!")
         else:
-            break
+            break # Mã hợp lệ và chưa tồn tại, thoát vòng lặp kiểm tra
 
-    # [Bẫy 4]: Kiểm tra tên rỗng và chuẩn hóa
     while True:
-        name = input("Tên Học viên: ").strip().title()
+        name = input("Nhập Tên Học Viên: ").strip().title()
         if not name:
             print("Tên học viên không được để trống!")
         else:
             break
 
-    # [Bẫy 2]: Kiểm tra điểm Toán
     while True:
         math_input = input("Nhập Điểm Toán: ").strip()
         if validate_score(math_input):
@@ -81,40 +96,36 @@ def add_student(student_list):
         else:
             print("Điểm không hợp lệ, phải là số từ 0 đến 10")
 
-    # [Bẫy 2]: Kiểm tra điểm Anh
     while True:
-        eng_input = input("Nhập Điểm Anh: ").strip()
-        if validate_score(eng_input):
-            eng_score = float(eng_input)
+        english_input = input("Nhập Điểm Anh: ").strip()
+        if validate_score(english_input):
+            english_score = float(english_input)
             break
         else:
             print("Điểm không hợp lệ, phải là số từ 0 đến 10")
 
-    # Lưu dữ liệu
     new_student = {
-        "student_id": s_id,
+        "student_id": student_id,
         "name": name,
         "math_score": math_score,
-        "english_score": eng_score
+        "english_score": english_score
     }
     student_list.append(new_student)
     print("Thêm học viên thành công!")
 
+
 def update_score(student_list):
-    """Chức năng 3: Cập nhật điểm thi"""
-    print("\n--- CẬP NHẬT ĐIỂM THI ---")
-    s_id = input("Nhập mã học viên cần cập nhật: ").strip().upper()
+    search_id = input("Nhập mã học viên cần cập nhật: ").strip().upper()
     
-    # Tái sử dụng hàm phụ trợ để tìm kiếm
-    found_student = find_student_by_id(student_list, s_id)
+    found_student = find_student_by_id(student_list, search_id)
     
     if not found_student:
-        print(f"Không tìm thấy học viên mang mã {s_id}!")
-        return
+        print(f"Không tìm thấy học viên mang mã {search_id}!")
+        return #  đẩy về Menu chính
 
-    print(f"Đang cập nhật điểm cho HV: {found_student['name']}")
+    print(f"Tìm thấy học viên: {found_student['name']}")
     
-    # Tái sử dụng hàm phụ trợ để nhập điểm Toán mới
+
     while True:
         math_input = input("Nhập Điểm Toán mới: ").strip()
         if validate_score(math_input):
@@ -123,28 +134,30 @@ def update_score(student_list):
         else:
             print("Điểm không hợp lệ, phải là số từ 0 đến 10")
 
-    # Tái sử dụng hàm phụ trợ để nhập điểm Anh mới
     while True:
-        eng_input = input("Nhập Điểm Anh mới: ").strip()
-        if validate_score(eng_input):
-            found_student["english_score"] = float(eng_input)
+        english_input = input("Nhập Điểm Anh mới: ").strip()
+        if validate_score(english_input):
+            found_student["english_score"] = float(english_input)
             break
         else:
             print("Điểm không hợp lệ, phải là số từ 0 đến 10")
             
     print("Cập nhật điểm thành công!")
 
+
 def evaluate_students(student_list):
-    """Chức năng 4: Đánh giá học lực"""
-    print("\n--- ĐÁNH GIÁ HỌC LỰC ---")
     if len(student_list) == 0:
         print("Danh sách học viên hiện đang trống.")
         return
 
     for student in student_list:
-        avg_score = (student["math_score"] + student["english_score"]) / 2
-        rank = get_rank(avg_score)
-        print(f"Mã: {student['student_id']} | Tên: {student['name']} | ĐTB: {avg_score:.2f} | Xếp loại: {rank}")
+        
+        average_score = (student["math_score"] + student["english_score"]) / 2
+        
+        
+        rank = get_rank(average_score)
+        
+        print(f"Mã: {student['student_id']} | Tên: {student['name']} | ĐTB: {average_score:.2f} | Xếp loại: {rank}")
 
 
 def main():
@@ -159,6 +172,7 @@ def main():
         
         choice = input("Mời bạn chọn chức năng (1-5): ").strip()
 
+        
         if choice not in ['1', '2', '3', '4', '5']:
             print("Lựa chọn không hợp lệ, vui lòng nhập lại!")
             continue
@@ -173,7 +187,8 @@ def main():
             evaluate_students(students)
         elif choice == '5':
             print("Cảm ơn bạn đã sử dụng hệ thống!")
-            break
+            break 
+
 
 if __name__ == "__main__":
     main()
